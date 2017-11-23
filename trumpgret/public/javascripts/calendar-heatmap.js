@@ -1,5 +1,8 @@
+/*
+Heatmap template. Slight modifications were made to fit Twitter data 
+and add some simple features.
+*/
 'use strict';
-
 /* globals d3 */
 
 var calendarHeatmap = {
@@ -146,7 +149,7 @@ var calendarHeatmap = {
     } else if (calendarHeatmap.overview === 'week') {
       calendarHeatmap.drawWeekOverview();
     } else if (calendarHeatmap.overview === 'day') {
-      calendarHeatmap.drawDayOverview();
+      calendarHeatmap.drawYearOverview();
     }
   },
 
@@ -266,9 +269,11 @@ var calendarHeatmap = {
 
         // Construct tooltip
         var tooltip_html = '';
-        tooltip_html += '<div><span><strong>Total time tracked:</strong></span>';
+        tooltip_html += '<div><span><strong>Total tweets tracked:</strong></span>';
 
         var sec = parseInt(d.total, 10);
+        tooltip_html += '<span>' + (sec === 1 ? '1 tweet' : sec + ' tweets') + '</span></div>';
+        /*
         var days = Math.floor(sec / 86400);
         if (days > 0) {
           tooltip_html += '<span>' + (days === 1 ? '1 day' : days + ' days') + '</span></div>';
@@ -288,7 +293,7 @@ var calendarHeatmap = {
           } else {
             tooltip_html += '<span>' + (minutes === 1 ? '1 minute' : minutes + ' minutes') + '</span></div>';
           }
-        }
+        }*/
         tooltip_html += '<br />';
 
         // Add summary to the tooltip
@@ -300,7 +305,7 @@ var calendarHeatmap = {
         } else {
           for (var i = 0; i < 5; i++) {
             tooltip_html += '<div><span><strong>' + d.summary[i].name + '</strong></span>';
-            tooltip_html += '<span>' + calendarHeatmap.formatTime(d.summary[i].value) + '</span></div>';
+            //tooltip_html += '<span>' + calendarHeatmap.formatTime(d.summary[i].value) + '</span></div>';
           };
           tooltip_html += '<br />';
 
@@ -308,8 +313,6 @@ var calendarHeatmap = {
           for (var i = 5; i < d.summary.length; i++) {
             other_projects_sum = +d.summary[i].value;
           };
-          tooltip_html += '<div><span><strong>Other:</strong></span>';
-          tooltip_html += '<span>' + calendarHeatmap.formatTime(other_projects_sum) + '</span></div>';
         }
 
         // Calculate tooltip position
@@ -486,25 +489,9 @@ var calendarHeatmap = {
         return (d.total > 0) ? color(d.total) : 'transparent';
       })
       .on('click', function(d) {
-        if (calendarHeatmap.in_transition) { return; }
-
-        // Don't transition if there is no data to show
-        if (d.total === 0) { return; }
-
-        calendarHeatmap.in_transition = true;
-
-        // Set selected date to the one clicked on
-        calendarHeatmap.selected = d;
-
-        // Hide tooltip
-        calendarHeatmap.hideTooltip();
-
-        // Remove all year overview related items and labels
-        calendarHeatmap.removeYearOverview();
-
-        // Redraw the chart
-        calendarHeatmap.overview = 'day';
-        calendarHeatmap.drawChart();
+        var url = "https://www.google.com/search?q=Donald+Trump+news+"+ d.date;
+        console.log(url);
+        window.location.href= url;
       })
       .on('mouseover', function(d) {
         if (calendarHeatmap.in_transition) { return; }
@@ -1661,18 +1648,7 @@ var calendarHeatmap = {
    * @param seconds Integer
    */
   formatTime: function(seconds) {
-    //var hours = Math.floor(seconds / 3600);
-    //var minutes = Math.floor((seconds - (hours * 3600)) / 60);
     var time = '';
-    /*if (hours > 0) {
-      time += hours === 1 ? '1 hour ' : hours + ' hours ';
-    }
-    if (minutes > 0) {
-      time += minutes === 1 ? '1 minute' : minutes + ' minutes';
-    }
-    if (hours === 0 && minutes === 0) {
-      time = Math.round(seconds) + ' tweets';
-    }*/
     if(seconds == 1){
       time = Math.round(seconds) + ' tweet';
     }else{
